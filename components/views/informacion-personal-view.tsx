@@ -3,13 +3,31 @@
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useState } from "react"
-import { Mail, Edit, Lock } from "lucide-react"
+import { Mail, Edit, Lock, User } from "lucide-react"
 import { useAuth } from "@/components/auth-context"
 
 export function InformacionPersonalView() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null)
-  const { userEmail } = useAuth()
+  const { userEmail, userName, userLastName } = useAuth()
+  const [isEditingPersonalEmail, setIsEditingPersonalEmail] = useState(false)
+  const [personalEmail, setPersonalEmail] = useState("pedropascal1975@gmail.com")
+  const [tempPersonalEmail, setTempPersonalEmail] = useState("")
+
+  const handleEditPersonalEmail = () => {
+    setTempPersonalEmail(personalEmail)
+    setIsEditingPersonalEmail(true)
+  }
+
+  const handleSavePersonalEmail = () => {
+    setPersonalEmail(tempPersonalEmail)
+    setIsEditingPersonalEmail(false)
+  }
+
+  const handleCancelEditPersonalEmail = () => {
+    setIsEditingPersonalEmail(false)
+  }
 
   const cards = [
     {
@@ -28,20 +46,21 @@ export function InformacionPersonalView() {
     if (selectedCard === 0) {
       // Email management content
       return (
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-4xl mx-auto px-20">
           {/* Correo Institucional */}
           <div className="space-y-2">
-            <p className="text-lg font-medium text-black">Correo Institucional</p>
-            <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-4">
+            <p className="text-base font-medium text-black">Correo Institucional</p>
+            <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                  <Mail className="h-5 w-5 text-[#385177]" />
-                  <p className="text-base text-[#385177] font-medium">{userEmail}</p>
+                  <Mail className="h-4 w-4 text-[#385177]" />
+                  <p className="text-sm text-[#385177] font-medium">{userEmail}</p>
                 </div>
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-[#385177]/30 text-[#385177] hover:bg-[#385177]/20 hover:text-[#385177] bg-white"
+                  disabled
+                  className="border-[#385177]/30 text-[#385177] bg-white opacity-50 cursor-not-allowed"
                 >
                   <Edit className="h-4 w-4 mr-1" />
                   Editar
@@ -52,21 +71,53 @@ export function InformacionPersonalView() {
 
           {/* Correo Personal */}
           <div className="space-y-2">
-            <p className="text-lg font-medium text-black">Correo Personal</p>
-            <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-4">
+            <p className="text-base font-medium text-black">Correo Personal</p>
+            <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-3">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                  <Mail className="h-5 w-5 text-[#385177]" />
-                  <p className="text-base text-[#385177] font-medium">pedrop2002@gmail.com</p>
+                  <Mail className="h-4 w-4 text-[#385177]" />
+                  {isEditingPersonalEmail ? (
+                    <Input
+                      type="email"
+                      value={tempPersonalEmail}
+                      onChange={(e) => setTempPersonalEmail(e.target.value)}
+                      className="text-sm text-[#385177] font-medium border-[#385177]/30 focus:border-[#385177] bg-white"
+                      placeholder="Ingrese su correo personal"
+                    />
+                  ) : (
+                    <p className="text-sm text-[#385177] font-medium">{personalEmail}</p>
+                  )}
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-[#385177]/30 text-[#385177] hover:bg-[#385177]/20 hover:text-[#385177] bg-white"
-                >
-                  <Edit className="h-4 w-4 mr-1" />
-                  Editar
-                </Button>
+                {isEditingPersonalEmail ? (
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleSavePersonalEmail}
+                      className="border-green-600/30 text-green-700 hover:bg-green-50 hover:text-green-700 bg-white"
+                    >
+                      Guardar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleCancelEditPersonalEmail}
+                      className="border-red-600/30 text-red-700 hover:bg-red-50 hover:text-red-700 bg-white"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleEditPersonalEmail}
+                    className="border-[#385177]/30 text-[#385177] hover:bg-[#385177]/20 hover:text-[#385177] bg-white"
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Editar
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -77,7 +128,7 @@ export function InformacionPersonalView() {
     if (selectedCard === 1) {
       // Password change content (placeholder)
       return (
-        <div className="space-y-6 max-w-md">
+        <div className="space-y-6 max-w-md mx-auto">
           {/* Nueva Contraseña */}
           <div className="space-y-2">
             <label htmlFor="new-password" className="text-sm font-medium text-black">
@@ -119,6 +170,81 @@ export function InformacionPersonalView() {
 
   return (
     <div className="space-y-6">
+      {/* Perfil de Usuario */}
+      <div className="relative bg-white rounded-lg shadow-sm overflow-hidden">
+        {/* Foto de fondo personalizada */}
+        <div className="h-48 relative">
+          <img 
+            src="/perfil-fondo-2.jpg" 
+            alt="Fondo de perfil" 
+            className="w-full h-50 object-cover"
+          />
+          {/* Botón de editar en esquina superior derecha */}
+          <Button
+            size="icon"
+            variant="ghost"
+            className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-700 rounded-full h-10 w-10"
+          >
+            <Edit className="h-5 w-5" />
+          </Button>
+          
+          {/* Tags de estado alineados a la derecha */}
+          <div className="absolute -bottom-13 right-4 flex gap-2">
+            <span className="inline-block px-3 py-1 bg-blue-50 border border-blue-400 text-blue-700 text-sm font-medium rounded-full">
+              Alumno Regular
+            </span>
+            <span className="inline-block px-3 py-1 bg-purple-50 border border-purple-400 text-purple-700 text-sm font-medium rounded-full">
+              Vespertino
+            </span>
+            <span className="inline-block px-3 py-1 bg-green-50 border border-green-400 text-green-700 text-sm font-medium rounded-full">
+              Matrícula Activa
+            </span>
+          </div>
+        </div>
+        
+        {/* Foto de perfil superpuesta */}
+        <div className="absolute top-32 left-8">
+          <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
+            <AvatarFallback className="bg-white text-[#385177] text-4xl">
+              <User className="w-16 h-16" />
+            </AvatarFallback>
+          </Avatar>
+        </div>
+        
+        {/* Información del usuario */}
+        <div className="pt-20 px-8 pb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {userName} {userLastName}
+          </h2>
+          
+          {/* Dos columnas */}
+          <div className="grid grid-cols-2 gap-8">
+            {/* Columna 1 - Info académica */}
+            <div className="space-y-1">
+              <p className="text-lg text-gray-600">
+                Ingeniería Civil Informática
+              </p>
+              <p className="text-lg text-gray-600">
+                Casa Central, Valparaíso
+              </p>
+            </div>
+            
+            {/* Columna 2 - Datos personales */}
+            <div className="space-y-1">
+              <p className="text-lg text-gray-600">
+                <span className="font-bold">Rol:</span> 202073197-5
+              </p>
+              <p className="text-lg text-gray-600">
+                <span className="font-bold">Año de Ingreso:</span> 2020
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================
+          DIV ORIGINAL 1 - BOTONES DE SELECCIÓN
+          ======================================== */}
       <div className="flex flex-wrap gap-4">
         {cards.map((card, index) => (
           <Card
@@ -138,6 +264,9 @@ export function InformacionPersonalView() {
         ))}
       </div>
 
+      {/* ========================================
+          DIV ORIGINAL 2 - CONTENIDO DINÁMICO
+          ======================================== */}
       {selectedCard !== null && <div className="p-6 bg-card w-full">{renderContent()}</div>}
     </div>
   )

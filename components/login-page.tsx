@@ -37,16 +37,19 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#385177] to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-[#000053] to-white flex items-center justify-center px-4 py-4">
       <div className="w-full max-w-md space-y-6">
         {/* Logo and Title */}
-        <div className="text-center space-y-4">
-          <img src="/logo-usm.svg" alt="Logo USM" className="h-24 w-auto mx-auto" />
+        <div className="text-center">
+          <img src="/logo-usm.svg" alt="Logo USM" className="h-36 w-auto mx-auto" />
           <div>
-            <h1 className="text-2xl font-bold text-white">Universidad Técnica Federico Santa María</h1>
-            <p className="text-white/80 mt-2">Portal de Autoservicio Institucional</p>
+            <h1 className="text-3xl font-bold text-white">
+              Universidad Técnica Federico Santa María
+            </h1>
+            <p className="text-white/90 mt-2">Portal de Autoservicio Institucional</p>
           </div>
         </div>
+        
 
         {/* Login Card */}
         <Card className="p-8 bg-white shadow-xl">
@@ -105,8 +108,8 @@ export function LoginPage() {
 
         {/* Footer */}
         <div className="text-center space-y-1">
-          <p className="text-xs text-white">© Universidad Técnica Federico Santa María</p>
-          <p className="text-xs text-white">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
+          <p className="text-xs text-[#385177]">© Universidad Técnica Federico Santa María</p>
+          <p className="text-xs text-[#385177]">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
         </div>
       </div>
     </div>

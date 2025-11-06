@@ -14,8 +14,14 @@ import {
   Moon,
   Sun,
   User,
+  GraduationCap,
+  Briefcase,
+  AlertTriangle,
+  AlertCircle,
+  X,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-context"
+import { useTheme } from "next-themes"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,18 +40,46 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, activeSection, onSectionChange }: DashboardLayoutProps) {
-  const [darkMode, setDarkMode] = useState(false)
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-  const [showNotificationDialog, setShowNotificationDialog] = useState(false)
+  const [showNotificationsPopup, setShowNotificationsPopup] = useState(false)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
-  const { userEmail, logout } = useAuth()
+  const { userEmail, userName, userLastName, logout } = useAuth()
+  const { theme, setTheme } = useTheme()
+
+  // Notificaciones estáticas
+  const notifications = [
+    {
+      type: 'alerta',
+      title: 'Alerta Pago de Interés',
+      message: 'El pago Matrícula de Agosto está atrasado',
+    },
+    {
+      type: 'alerta',
+      title: 'Alerta Pago de Interés',
+      message: 'El pago Arancel de Agosto está atrasado',
+    },
+    {
+      type: 'alerta',
+      title: 'Alerta Pago de Interés',
+      message: 'El pago Matrícula de Septiembre está atrasado',
+    },
+    {
+      type: 'alerta',
+      title: 'Alerta Pago de Interés',
+      message: 'El pago Arancel de Septiembre está atrasado',
+    },
+    {
+      type: 'aviso',
+      title: 'Aviso Pago de Interés',
+      message: 'El pago Arancel de Octubre vencerá pronto',
+    },
+  ]
 
   const menuItems = [
+    { icon: User, label: "Informacion Personal", id: "informacion-personal" },
     { icon: ShoppingCart, label: "Pago en Linea", id: "pago-en-linea" },
-    { icon: Package, label: "Matricula", id: "matricula" },
-    { icon: BarChart3, label: "Servicios", id: "servicios" },
-    { icon: LayoutDashboard, label: "Informacion Personal", id: "informacion-personal" },
-    { icon: Settings, label: "Configuracion", id: "configuracion", disabled: true },
+    { icon: GraduationCap, label: "Matricula", id: "matricula" },
+    { icon: Briefcase, label: "Servicios", id: "servicios" },
   ]
 
   const handleLogout = () => {
@@ -53,9 +87,12 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
     setShowLogoutDialog(false)
   }
 
-  const handleAcceptNotifications = () => {
-    setShowNotificationDialog(false)
-    setShowSuccessToast(true)
+  const toggleDarkMode = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
+
+  const toggleNotifications = () => {
+    setShowNotificationsPopup(!showNotificationsPopup)
   }
 
   useEffect(() => {
@@ -70,13 +107,13 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
   return (
     <div className="min-h-screen bg-background">
       {/* Top Bar */}
-      <div className="px-8 py-4 bg-[#385177]"></div>
+      <div className="px-8 py-4 bg-[#000053]"></div>
 
       {/* University Logo and Title */}
-      <div className="px-8 pb-6 bg-[#385177]">
+      <div className="px-8 pb-6 bg-[#000053]">
         <div className="flex gap-6 items-center">
           <div className="w-64 flex justify-center">
-            <img src="/logo-usm.svg" alt="Logo USM" className="h-24 w-auto" />
+            <img src="/logo-usm.svg" alt="Logo USM" className="h-36 w-auto" />
           </div>
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-white">Universidad Tecnica Federico Santa Maria</h1>
@@ -85,8 +122,8 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
       </div>
 
       {/* Main Content Area */}
-      <div className="px-8 pb-8 bg-gradient-to-b from-[#385177] to-white">
-        <div className="flex gap-6">
+      <div className="px-8 pb-8 bg-gradient-to-b from-[#000053] to-white">
+        <div className="flex gap-6 items-start">
           {/* Sidebar */}
           <div className="w-64 bg-sidebar rounded-2xl p-6 flex flex-col h-fit">
             {/* User Profile */}
@@ -97,7 +134,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                 </AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <div className="text-sidebar-foreground font-semibold">Bienvenid@</div>
+                <div className="text-sidebar-foreground font-semibold">{userName} {userLastName}</div>
                 <div className="text-sidebar-foreground/70 text-xs">{userEmail}</div>
               </div>
             </div>
@@ -108,12 +145,11 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                 <button
                   key={item.label}
                   onClick={() => onSectionChange(item.id)}
-                  disabled={item.disabled}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
                     activeSection === item.id
-                      ? "bg-[#385177] text-white font-medium"
+                      ? "bg-[#000053] text-white font-medium"
                       : "text-sidebar-foreground/70 hover:bg-white/5"
-                  } ${item.disabled ? "opacity-40 cursor-not-allowed hover:bg-transparent" : ""}`}
+                  }`}
                 >
                   <item.icon className="w-4 h-4" />
                   {item.label}
@@ -121,70 +157,146 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
               ))}
             </nav>
 
-            <button
-              onClick={() => setShowLogoutDialog(true)}
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-red-400 hover:bg-white/5 transition-colors mt-4"
-            >
-              <LogOut className="w-4 h-4 text-red-400" />
-              Cerrar Sesion
-            </button>
+            {/* Divider */}
+            <div className="border-t border-sidebar-foreground/20 my-4"></div>
+
+            {/* Settings and Logout Section */}
+            <div className="space-y-2">
+              <button
+                onClick={() => onSectionChange("configuracion")}
+                disabled
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
+                  activeSection === "configuracion"
+                    ? "bg-[#000053] text-white font-medium"
+                    : "text-sidebar-foreground/70 hover:bg-white/5"
+                } opacity-40 cursor-not-allowed hover:bg-transparent`}
+              >
+                <Settings className="w-4 h-4" />
+                Configuracion
+              </button>
+              <button
+                onClick={() => setShowLogoutDialog(true)}
+                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-red-400 hover:bg-white/5 transition-colors"
+              >
+                <LogOut className="w-4 h-4 text-red-400" />
+                Cerrar Sesion
+              </button>
+            </div>
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1 bg-card rounded-2xl p-6">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-card-foreground">
-                Bienvenid@ al Portal de Autoservicio Institucional
+          {/* Main Content Column */}
+          <div className="flex-1 flex flex-col gap-4 relative">
+            {/* New Header - Outside content div, on blue background */}
+            <div className="absolute -top-12 left-0 right-0 flex items-center justify-between px-6 z-10">
+              <h2 className="text-xl font-semibold text-white">
+                Bienvenido <span className="font-bold text-blue-200">{userName} {userLastName}</span> al Portal de Autoservicio Institucional
               </h2>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 relative">
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="rounded-full bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                  className="rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                  onClick={toggleDarkMode}
                 >
-                  {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </Button>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="rounded-full relative"
-                  onClick={() => setShowNotificationDialog(true)}
-                >
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                </Button>
+                <div className="relative">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="rounded-full relative bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                    onClick={toggleNotifications}
+                  >
+                    <Bell className="w-4 h-4" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                  </Button>
+                  
+                  {/* Notifications Popup */}
+                  {showNotificationsPopup && (
+                    <>
+                      {/* Backdrop to close on outside click */}
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setShowNotificationsPopup(false)}
+                      />
+                      
+                      {/* Popup */}
+                      <div className="absolute right-0 top-12 w-[480px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 border border-gray-200 dark:border-gray-700">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                          <h3 className="font-semibold text-gray-900 dark:text-white">Notificaciones</h3>
+                          <button
+                            onClick={() => setShowNotificationsPopup(false)}
+                            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {/* Notifications List */}
+                        <div>
+                          {notifications.map((notification, index) => (
+                            <div
+                              key={index}
+                              className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
+                                notification.type === 'alerta'
+                                  ? 'bg-red-50 dark:bg-red-950 border-l-4 border-l-red-500'
+                                  : 'bg-yellow-50 dark:bg-yellow-950 border-l-4 border-l-yellow-500'
+                              }`}
+                            >
+                              <div className="flex gap-3">
+                                <div className="flex-shrink-0 mt-0.5">
+                                  {notification.type === 'alerta' ? (
+                                    <AlertTriangle className="w-5 h-5 text-red-500" />
+                                  ) : (
+                                    <AlertCircle className="w-5 h-5 text-yellow-600" />
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    {notification.title}
+                                  </p>
+                                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5">
+                                    {notification.message}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Dashboard Content */}
-            {children}
+            {/* Main Content */}
+            <div className="bg-card rounded-2xl p-6">
+              {/* Section Header - Visible for specific sections */}
+              {activeSection !== "informacion-personal" && (
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                  <h2 className="text-xl font-semibold text-card-foreground">
+                    {activeSection === "pago-en-linea" && "Pago en Linea"}
+                    {activeSection === "matricula" && "Matricula"}
+                    {activeSection === "servicios" && "Servicios"}
+                  </h2>
+                </div>
+              )}
+
+              {/* Dashboard Content */}
+              {children}
+            </div>
           </div>
         </div>
 
         {/* Footer Texts */}
         <div className="mt-4 text-center space-y-1">
-          <p className="text-xs text-black">© Universidad Técnica Federico Santa María</p>
-          <p className="text-xs text-black">Portal de Requerimientos</p>
-          <p className="text-xs text-black">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
+          <p className="text-xs text-[#000053]">© Universidad Técnica Federico Santa María</p>
+          <p className="text-xs text-[#000053]">Portal de Requerimientos</p>
+          <p className="text-xs text-[#000053]">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
         </div>
       </div>
-
-      {/* Notification Dialog */}
-      <AlertDialog open={showNotificationDialog} onOpenChange={setShowNotificationDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Notificaciones</AlertDialogTitle>
-            <AlertDialogDescription>
-              ¿Le gustaría recibir notificaciones y recordatorios del portal de autoservicio institucional?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>No</AlertDialogCancel>
-            <AlertDialogAction onClick={handleAcceptNotifications}>Sí</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       {/* Logout Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>

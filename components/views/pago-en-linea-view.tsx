@@ -20,63 +20,56 @@ export function PagoEnLineaView() {
   const { logout } = useAuth()
   const [charges, setCharges] = useState([
     {
-      periodo: "2025",
-      codigo: "MTRD",
-      descripcion: "MATRICULA PREGRADO DIURNO",
+      tipo: "Matricula",
+      descripcion: "PREGRADO DIURNO",
       fechaVencimiento: "15-AGO-2025",
       monto: 65000.0,
       intereses: 1040.0,
       total: 66040.0,
     },
     {
-      periodo: "2025",
-      codigo: "1773",
-      descripcion: "ARA ING CIVIL INFORMA DI SJOAQ",
+      tipo: "Arancel",
+      descripcion: "ING CIVIL INF CC",
       fechaVencimiento: "31-AGO-2025",
       monto: 621000.0,
       intereses: 6624.0,
       total: 627624.0,
     },
     {
-      periodo: "2025",
-      codigo: "MTRD",
-      descripcion: "MATRICULA PREGRADO DIURNO",
+      tipo: "Matricula",
+      descripcion: "PREGRADO DIURNO",
       fechaVencimiento: "15-SEP-2025",
       monto: 65000.0,
       intereses: 368.0,
       total: 65368.0,
     },
     {
-      periodo: "2025",
-      codigo: "1773",
-      descripcion: "ARA ING CIVIL INFORMA DI SJOAQ",
+      tipo: "Arancel",
+      descripcion: "ING CIVIL INF CC",
       fechaVencimiento: "30-SEP-2025",
       monto: 621000.0,
       intereses: 414.0,
       total: 621414.0,
     },
     {
-      periodo: "2025",
-      codigo: "1773",
-      descripcion: "ARA ING CIVIL INFORMA DI SJOAQ",
+      tipo: "Arancel",
+      descripcion: "ING CIVIL INF CC",
       fechaVencimiento: "31-OCT-2025",
       monto: 621000.0,
       intereses: 0.0,
       total: 621000.0,
     },
     {
-      periodo: "2025",
-      codigo: "1773",
-      descripcion: "ARA ING CIVIL INFORMA DI SJOAQ",
+      tipo: "Arancel",
+      descripcion: "ING CIVIL INF CC",
       fechaVencimiento: "30-NOV-2025",
       monto: 621000.0,
       intereses: 0.0,
       total: 621000.0,
     },
     {
-      periodo: "2025",
-      codigo: "1773",
-      descripcion: "ARA ING CIVIL INFORMA DI SJOAQ",
+      tipo: "Arancel",
+      descripcion: "ING CIVIL INF CC",
       fechaVencimiento: "31-DIC-2025",
       monto: 621000.0,
       intereses: 0.0,
@@ -129,8 +122,7 @@ export function PagoEnLineaView() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-100">
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Periodo</th>
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Código</th>
+                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Tipo</th>
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Descripción</th>
                 <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">
                   Fecha de Vencimiento
@@ -142,38 +134,44 @@ export function PagoEnLineaView() {
               </tr>
             </thead>
             <tbody>
-              {charges.map((charge, index) => (
-                <tr key={index} className="bg-white hover:bg-gray-50">
-                  <td className="border border-gray-300 px-3 py-2 text-sm">{charge.periodo}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm">{charge.codigo}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm">{charge.descripcion}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm">{charge.fechaVencimiento}</td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm text-right">
-                    {charge.monto.toLocaleString("es-CL", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm text-right">
-                    {charge.intereses.toLocaleString("es-CL", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </td>
-                  <td className="border border-gray-300 px-3 py-2 text-sm text-right">
-                    {charge.total.toLocaleString("es-CL", {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </td>
-                  <td className="border border-gray-300 px-3 py-2 text-center">
-                    <Checkbox
-                      checked={selectedRows.includes(index)}
-                      onCheckedChange={() => handleRowSelection(index)}
-                    />
-                  </td>
-                </tr>
-              ))}
+              {charges.map((charge, index) => {
+                const isOverdue = index < 4
+                const isUpcoming = index === 4
+                const bgColor = isOverdue ? "bg-red-50" : isUpcoming ? "bg-yellow-50" : "bg-white"
+                const hoverColor = isOverdue ? "hover:bg-red-100" : isUpcoming ? "hover:bg-yellow-100" : "hover:bg-gray-50"
+                
+                return (
+                  <tr key={index} className={`${bgColor} ${hoverColor}`}>
+                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.tipo}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.descripcion}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.fechaVencimiento}</td>
+                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
+                      {charge.monto.toLocaleString("es-CL", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
+                      {charge.intereses.toLocaleString("es-CL", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
+                      {charge.total.toLocaleString("es-CL", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </td>
+                    <td className="border border-gray-300 px-3 py-2 text-center">
+                      <Checkbox
+                        checked={selectedRows.includes(index)}
+                        onCheckedChange={() => handleRowSelection(index)}
+                      />
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -191,7 +189,7 @@ export function PagoEnLineaView() {
         </div>
 
         {/* Summary Section */}
-        <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+        <div className="space-y-3 bg-gray-50 px-8 py-4 rounded-lg">
           <div className="flex justify-between items-center">
             <span className="font-semibold">Saldo de Cuenta:</span>
             <span className="font-bold text-lg">
