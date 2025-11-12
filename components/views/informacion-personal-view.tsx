@@ -44,10 +44,8 @@ export function InformacionPersonalView() {
     if (selectedCard === null) return null
 
     if (selectedCard === 0) {
-      // Email management content
       return (
         <div className="space-y-4 max-w-4xl mx-auto px-20">
-          {/* Correo Institucional */}
           <div className="space-y-2">
             <p className="text-base font-medium text-black">Correo Institucional</p>
             <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-3">
@@ -68,8 +66,6 @@ export function InformacionPersonalView() {
               </div>
             </div>
           </div>
-
-          {/* Correo Personal */}
           <div className="space-y-2">
             <p className="text-base font-medium text-black">Correo Personal</p>
             <div className="bg-[#F0F4F8] border border-[#385177]/20 rounded-lg p-3">
@@ -129,7 +125,6 @@ export function InformacionPersonalView() {
       // Password change content (placeholder)
       return (
         <div className="space-y-6 max-w-md mx-auto">
-          {/* Nueva Contraseña */}
           <div className="space-y-2">
             <label htmlFor="new-password" className="text-sm font-medium text-black">
               Ingrese Nueva Contraseña
@@ -144,8 +139,6 @@ export function InformacionPersonalView() {
               />
             </div>
           </div>
-
-          {/* Repetir Contraseña */}
           <div className="space-y-2">
             <label htmlFor="repeat-password" className="text-sm font-medium text-black">
               Repetir Contraseña
@@ -161,7 +154,6 @@ export function InformacionPersonalView() {
             </div>
           </div>
 
-          {/* Botón Actualizar */}
           <Button className="w-full bg-[#385177] hover:bg-[#2d4060] text-white">Actualizar Contraseña</Button>
         </div>
       )
@@ -170,25 +162,13 @@ export function InformacionPersonalView() {
 
   return (
     <div className="space-y-6">
-      {/* Perfil de Usuario */}
       <div className="relative bg-white rounded-lg shadow-sm overflow-hidden">
-        {/* Foto de fondo personalizada */}
         <div className="h-48 relative">
           <img 
             src="/perfil-fondo-2.jpg" 
             alt="Fondo de perfil" 
             className="w-full h-50 object-cover"
           />
-          {/* Botón de editar en esquina superior derecha */}
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-700 rounded-full h-10 w-10"
-          >
-            <Edit className="h-5 w-5" />
-          </Button>
-          
-          {/* Tags de estado alineados a la derecha */}
           <div className="absolute -bottom-13 right-4 flex gap-2">
             <span className="inline-block px-3 py-1 bg-blue-50 border border-blue-400 text-blue-700 text-sm font-medium rounded-full">
               Alumno Regular
@@ -202,7 +182,6 @@ export function InformacionPersonalView() {
           </div>
         </div>
         
-        {/* Foto de perfil superpuesta */}
         <div className="absolute top-32 left-8">
           <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
             <AvatarFallback className="bg-white text-[#385177] text-4xl">
@@ -211,15 +190,12 @@ export function InformacionPersonalView() {
           </Avatar>
         </div>
         
-        {/* Información del usuario */}
         <div className="pt-20 px-8 pb-6">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             {userName} {userLastName}
           </h2>
           
-          {/* Dos columnas */}
           <div className="grid grid-cols-2 gap-8">
-            {/* Columna 1 - Info académica */}
             <div className="space-y-1">
               <p className="text-lg text-gray-600">
                 Ingeniería Civil Informática
@@ -229,7 +205,6 @@ export function InformacionPersonalView() {
               </p>
             </div>
             
-            {/* Columna 2 - Datos personales */}
             <div className="space-y-1">
               <p className="text-lg text-gray-600">
                 <span className="font-bold">Rol:</span> 202073197-5
@@ -241,10 +216,6 @@ export function InformacionPersonalView() {
           </div>
         </div>
       </div>
-
-      {/* ========================================
-          DIV ORIGINAL 1 - BOTONES DE SELECCIÓN
-          ======================================== */}
       <div className="flex flex-wrap gap-4">
         {cards.map((card, index) => (
           <Card
@@ -263,10 +234,6 @@ export function InformacionPersonalView() {
           </Card>
         ))}
       </div>
-
-      {/* ========================================
-          DIV ORIGINAL 2 - CONTENIDO DINÁMICO
-          ======================================== */}
       {selectedCard !== null && <div className="p-6 bg-card w-full">{renderContent()}</div>}
     </div>
   )

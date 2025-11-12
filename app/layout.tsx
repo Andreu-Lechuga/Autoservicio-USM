@@ -6,9 +6,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Aplicacion Autoservicio USM',
+  description: 'Portal de autoservicio para estudiantes de la Universidad Técnica Federico Santa María.',
 }
 
 export default function RootLayout({

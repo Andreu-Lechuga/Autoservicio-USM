@@ -121,12 +121,9 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="px-8 pb-8 bg-gradient-to-b from-[#000053] to-white">
         <div className="flex gap-6 items-start">
-          {/* Sidebar */}
           <div className="w-64 bg-sidebar rounded-2xl p-6 flex flex-col h-fit">
-            {/* User Profile */}
             <div className="flex flex-col items-center mb-8">
               <Avatar className="w-20 h-20 mb-3">
                 <AvatarFallback className="bg-white text-[#385177] text-xl">
@@ -139,7 +136,6 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
               </div>
             </div>
 
-            {/* Menu Items */}
             <nav className="space-y-2 flex-1">
               {menuItems.map((item) => (
                 <button
@@ -157,19 +153,16 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
               ))}
             </nav>
 
-            {/* Divider */}
             <div className="border-t border-sidebar-foreground/20 my-4"></div>
 
-            {/* Settings and Logout Section */}
             <div className="space-y-2">
               <button
                 onClick={() => onSectionChange("configuracion")}
-                disabled
                 className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors ${
                   activeSection === "configuracion"
-                    ? "bg-[#000053] text-white font-medium"
-                    : "text-sidebar-foreground/70 hover:bg-white/5"
-                } opacity-40 cursor-not-allowed hover:bg-transparent`}
+                      ? "bg-[#000053] text-white font-medium"
+                      : "text-sidebar-foreground/70 hover:bg-white/5"
+                }`}
               >
                 <Settings className="w-4 h-4" />
                 Configuracion
@@ -184,7 +177,6 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
             </div>
           </div>
 
-          {/* Main Content Column */}
           <div className="flex-1 flex flex-col gap-4 relative">
             {/* New Header - Outside content div, on blue background */}
             <div className="absolute -top-12 left-0 right-0 flex items-center justify-between px-6 z-10">
@@ -211,18 +203,14 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                   </Button>
                   
-                  {/* Notifications Popup */}
                   {showNotificationsPopup && (
                     <>
-                      {/* Backdrop to close on outside click */}
                       <div
                         className="fixed inset-0 z-40"
                         onClick={() => setShowNotificationsPopup(false)}
                       />
-                      
-                      {/* Popup */}
+
                       <div className="absolute right-0 top-12 w-[480px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 border border-gray-200 dark:border-gray-700">
-                        {/* Header */}
                         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
                           <h3 className="font-semibold text-gray-900 dark:text-white">Notificaciones</h3>
                           <button
@@ -233,7 +221,6 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                           </button>
                         </div>
                         
-                        {/* Notifications List */}
                         <div>
                           {notifications.map((notification, index) => (
                             <div
@@ -271,9 +258,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
               </div>
             </div>
 
-            {/* Main Content */}
             <div className="bg-card rounded-2xl p-6">
-              {/* Section Header - Visible for specific sections */}
               {activeSection !== "informacion-personal" && (
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-card-foreground">
@@ -284,21 +269,17 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                 </div>
               )}
 
-              {/* Dashboard Content */}
               {children}
             </div>
           </div>
         </div>
 
-        {/* Footer Texts */}
         <div className="mt-4 text-center space-y-1">
           <p className="text-xs text-[#000053]">© Universidad Técnica Federico Santa María</p>
           <p className="text-xs text-[#000053]">Portal de Requerimientos</p>
           <p className="text-xs text-[#000053]">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
         </div>
       </div>
-
-      {/* Logout Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
