@@ -12,7 +12,7 @@ export function InformacionPersonalView() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null)
   const { userEmail, userName, userLastName } = useAuth()
   const [isEditingPersonalEmail, setIsEditingPersonalEmail] = useState(false)
-  const [personalEmail, setPersonalEmail] = useState("pedropascal1975@gmail.com")
+  const [personalEmail, setPersonalEmail] = useState("correo.personal@gmail.com")
   const [tempPersonalEmail, setTempPersonalEmail] = useState("")
   const [showPasswordSuccessPopup, setShowPasswordSuccessPopup] = useState(false)
 

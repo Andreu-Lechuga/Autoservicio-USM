@@ -291,6 +291,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                       {activeSection === "pago-en-linea" && "Pago en Linea"}
                       {activeSection === "matricula" && "Matricula"}
                       {activeSection === "servicios" && "Servicios"}
+                      {activeSection === "configuracion" && "Configuración"}
                     </h2>
                   </div>
                 )}
