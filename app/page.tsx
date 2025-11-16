@@ -12,10 +12,21 @@ import { AuthProvider, useAuth } from "@/components/auth-context"
 import { LoginPage } from "@/components/login-page"
 
 function DashboardContent() {
-  const [activeSection, setActiveSection] = useState("informacion-personal")
+  const [activeSection, setActiveSection] = useState<string | null>(null)
   const { isAuthenticated } = useAuth()
 
+  const handleSectionChange = (section: string) => {
+    // Toggle: si la sección clickeada ya está activa, des-seleccionar
+    if (activeSection === section) {
+      setActiveSection(null)
+    } else {
+      setActiveSection(section)
+    }
+  }
+
   const renderContent = () => {
+    if (!activeSection) return null
+
     switch (activeSection) {
       case "informacion-personal":
         return <InformacionPersonalView />
@@ -30,7 +41,7 @@ function DashboardContent() {
       case "configuracion":
         return <ConfiguracionView />
       default:
-        return <InformacionPersonalView />
+        return null
     }
   }
 
@@ -39,7 +50,7 @@ function DashboardContent() {
   }
 
   return (
-    <DashboardLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+    <DashboardLayout activeSection={activeSection} onSectionChange={handleSectionChange}>
       <div className="space-y-6">{renderContent()}</div>
     </DashboardLayout>
   )

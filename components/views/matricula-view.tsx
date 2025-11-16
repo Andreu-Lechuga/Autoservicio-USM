@@ -7,6 +7,18 @@ import { AlertTriangle } from "lucide-react"
 export function MatriculaView() {
   const [selectedCard, setSelectedCard] = useState<number | null>(null)
 
+  const getStatusBadge = (estado: string) => {
+    if (estado === "Matriculado") {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+          Matriculado
+        </span>
+      )
+    }
+    return null
+  }
+
   const cards = [
     { title: "Inicia tu Matricula", description: "" },
     { title: "Revisa el Estado de tus Postulaciones", description: "" },
@@ -42,46 +54,50 @@ export function MatriculaView() {
             </div>
           )}
           {selectedCard === 1 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-foreground">Postulaciones Actuales</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+            <div className="space-y-6">
+              {/* Modern Table */}
+              <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+                <table className="w-full">
                   <thead>
-                    <tr className="bg-blue-100">
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                         Periodo
                       </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                         Carrera
                       </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
-                        Campus/Sede
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                        Campus
                       </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
-                        Tipo de Ingreso
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                        Ingreso
                       </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                         Estado
                       </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
-                        Fecha Estado
-                      </th>
-                      <th className="border border-gray-300 px-4 py-2 text-left text-sm font-medium text-foreground">
-                        Paso
+                      <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                        Fecha de Estado
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr className="bg-white">
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">2020</td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">
-                        Ingeniería Civil en Informática
+                  <tbody className="divide-y divide-gray-200">
+                    <tr className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-4">
+                        <span className="text-sm font-semibold text-gray-900">2020</span>
                       </td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">San Joaquín</td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">Ingreso Regular</td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">Matriculado</td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">10-MAR-2020</td>
-                      <td className="border border-gray-300 px-4 py-2 text-sm text-foreground">4</td>
+                      <td className="px-4 py-4">
+                        <span className="text-sm text-gray-900">Ingeniería Civil en Informática</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="text-sm text-gray-900">Casa Central</span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="text-sm text-gray-900">Regular</span>
+                      </td>
+                      <td className="px-4 py-4">{getStatusBadge("Matriculado")}</td>
+                      <td className="px-4 py-4">
+                        <span className="text-sm text-gray-900">10-MAR-2020</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Mail, Edit, Lock, User } from "lucide-react"
 import { useAuth } from "@/components/auth-context"
 
@@ -14,6 +14,7 @@ export function InformacionPersonalView() {
   const [isEditingPersonalEmail, setIsEditingPersonalEmail] = useState(false)
   const [personalEmail, setPersonalEmail] = useState("pedropascal1975@gmail.com")
   const [tempPersonalEmail, setTempPersonalEmail] = useState("")
+  const [showPasswordSuccessPopup, setShowPasswordSuccessPopup] = useState(false)
 
   const handleEditPersonalEmail = () => {
     setTempPersonalEmail(personalEmail)
@@ -28,6 +29,19 @@ export function InformacionPersonalView() {
   const handleCancelEditPersonalEmail = () => {
     setIsEditingPersonalEmail(false)
   }
+
+  const handleUpdatePassword = () => {
+    setShowPasswordSuccessPopup(true)
+  }
+
+  useEffect(() => {
+    if (showPasswordSuccessPopup) {
+      const timer = setTimeout(() => {
+        setShowPasswordSuccessPopup(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showPasswordSuccessPopup])
 
   const cards = [
     {
@@ -154,7 +168,7 @@ export function InformacionPersonalView() {
             </div>
           </div>
 
-          <Button className="w-full bg-[#385177] hover:bg-[#2d4060] text-white">Actualizar Contraseña</Button>
+          <Button onClick={handleUpdatePassword} className="w-full bg-[#385177] hover:bg-[#2d4060] text-white">Actualizar Contraseña</Button>
         </div>
       )
     }
@@ -165,7 +179,7 @@ export function InformacionPersonalView() {
       <div className="relative bg-white rounded-lg shadow-sm overflow-hidden">
         <div className="h-48 relative">
           <img 
-            src="/perfil-fondo-2.jpg" 
+            src="/perfil-fondo-1.jpg" 
             alt="Fondo de perfil" 
             className="w-full h-50 object-cover"
           />
@@ -173,7 +187,7 @@ export function InformacionPersonalView() {
             <span className="inline-block px-3 py-1 bg-blue-50 border border-blue-400 text-blue-700 text-sm font-medium rounded-full">
               Alumno Regular
             </span>
-            <span className="inline-block px-3 py-1 bg-purple-50 border border-purple-400 text-purple-700 text-sm font-medium rounded-full">
+            <span className="inline-block px-3 py-1 bg-amber-50 border border-amber-400 text-amber-700 text-sm font-medium rounded-full">
               Vespertino
             </span>
             <span className="inline-block px-3 py-1 bg-green-50 border border-green-400 text-green-700 text-sm font-medium rounded-full">
@@ -205,6 +219,7 @@ export function InformacionPersonalView() {
               </p>
             </div>
             
+            {/* Bloque antiguo - Ahora se muestra en la triple columna inferior
             <div className="space-y-1">
               <p className="text-lg text-gray-600">
                 <span className="font-bold">Rol:</span> 202073197-5
@@ -212,6 +227,43 @@ export function InformacionPersonalView() {
               <p className="text-lg text-gray-600">
                 <span className="font-bold">Año de Ingreso:</span> 2020
               </p>
+            </div>
+            */}
+          </div>
+          
+          
+          {/* Nueva sección de triple columna para datos fijos */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="grid grid-cols-3 divide-x divide-gray-200">
+              {/* Columna RUT */}
+              <div className="px-4 text-center">
+                <p className="text-base font-bold text-gray-700 mb-2">
+                  Rut
+                </p>
+                <p className="text-lg text-gray-600">
+                  20.188.608-K
+                </p>
+              </div>
+              
+              {/* Columna AÑO DE INGRESO */}
+              <div className="px-4 text-center">
+                <p className="text-base font-bold text-gray-700 mb-2">
+                  Año de Ingreso
+                </p>
+                <p className="text-lg text-gray-600">
+                  2020
+                </p>
+              </div>
+              
+              {/* Columna ROL */}
+              <div className="px-4 text-center">
+                <p className="text-base font-bold text-gray-700 mb-2">
+                  Rol
+                </p>
+                <p className="text-lg text-gray-600">
+                  202073455-6
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -235,6 +287,15 @@ export function InformacionPersonalView() {
         ))}
       </div>
       {selectedCard !== null && <div className="p-6 bg-card w-full">{renderContent()}</div>}
+
+      {/* Pop-up de confirmación de contraseña */}
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transition-all duration-500 z-50 ${
+          showPasswordSuccessPopup ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+      >
+        <p className="font-medium">Nueva Contraseña Guardada</p>
+      </div>
     </div>
   )
 }

@@ -37,8 +37,17 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#000053] to-white flex items-center justify-center px-4 py-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen relative flex items-center justify-center px-4 py-4">
+      {/* Background Image without Overlay */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="/perfil-fondo-2.jpg" 
+          alt="Background" 
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Logo and Title */}
         <div className="text-center">
           <img src="/logo-usm.svg" alt="Logo USM" className="h-36 w-auto mx-auto" />
@@ -46,7 +55,7 @@ export function LoginPage() {
             <h1 className="text-3xl font-bold text-white">
               Universidad Técnica Federico Santa María
             </h1>
-            <p className="text-white/90 mt-2">Portal de Autoservicio Institucional</p>
+            <p className="text-xl font-semibold text-white/90 mt-10">Portal de Autoservicio Institucional</p>
           </div>
         </div>
         

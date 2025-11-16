@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAuth } from "@/components/auth-context"
+import { MoreVertical } from "lucide-react"
 
 export function PagoEnLineaView() {
   const [selectedRows, setSelectedRows] = useState<number[]>([])
@@ -20,60 +21,67 @@ export function PagoEnLineaView() {
   const { logout } = useAuth()
   const [charges, setCharges] = useState([
     {
-      tipo: "Matricula",
-      descripcion: "PREGRADO DIURNO",
+      tipo: "Matrícula",
+      descripcion: "Pregrado Diurno",
       fechaVencimiento: "15-AGO-2025",
       monto: 65000.0,
       intereses: 1040.0,
       total: 66040.0,
+      estado: "vencido" as const,
     },
     {
       tipo: "Arancel",
-      descripcion: "ING CIVIL INF CC",
+      descripcion: "Ing. Civil Informática",
       fechaVencimiento: "31-AGO-2025",
       monto: 621000.0,
       intereses: 6624.0,
       total: 627624.0,
+      estado: "vencido" as const,
     },
     {
-      tipo: "Matricula",
-      descripcion: "PREGRADO DIURNO",
+      tipo: "Matrícula",
+      descripcion: "Pregrado Diurno",
       fechaVencimiento: "15-SEP-2025",
       monto: 65000.0,
       intereses: 368.0,
       total: 65368.0,
+      estado: "vencido" as const,
     },
     {
       tipo: "Arancel",
-      descripcion: "ING CIVIL INF CC",
+      descripcion: "Ing. Civil Informática",
       fechaVencimiento: "30-SEP-2025",
       monto: 621000.0,
       intereses: 414.0,
       total: 621414.0,
+      estado: "vencido" as const,
     },
     {
       tipo: "Arancel",
-      descripcion: "ING CIVIL INF CC",
+      descripcion: "Ing. Civil Informática",
       fechaVencimiento: "31-OCT-2025",
       monto: 621000.0,
       intereses: 0.0,
       total: 621000.0,
+      estado: "por-vencer" as const,
     },
     {
       tipo: "Arancel",
-      descripcion: "ING CIVIL INF CC",
+      descripcion: "Ing. Civil Informática",
       fechaVencimiento: "30-NOV-2025",
       monto: 621000.0,
       intereses: 0.0,
       total: 621000.0,
+      estado: "activo" as const,
     },
     {
       tipo: "Arancel",
-      descripcion: "ING CIVIL INF CC",
+      descripcion: "Ing. Civil Informática",
       fechaVencimiento: "31-DIC-2025",
       monto: 621000.0,
       intereses: 0.0,
       total: 621000.0,
+      estado: "activo" as const,
     },
   ])
 
@@ -86,6 +94,8 @@ export function PagoEnLineaView() {
   }
 
   const totalSeleccionado = selectedRows.reduce((sum, index) => sum + charges[index].total, 0)
+  const interesAcumulado = charges.reduce((sum, charge) => sum + charge.intereses, 0)
+  const deudaTotal = charges.reduce((sum, charge) => sum + charge.total, 0)
 
   const saldoCuenta = 3243446.0
 
@@ -114,73 +124,172 @@ export function PagoEnLineaView() {
 
   const hasSelection = selectedRows.length > 0
 
+  const getStatusBadge = (estado: "vencido" | "por-vencer" | "activo") => {
+    switch (estado) {
+      case "vencido":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+            Atrasado
+          </span>
+        )
+      case "por-vencer":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            Expira en 7 días
+          </span>
+        )
+      case "activo":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+            A tiempo
+          </span>
+        )
+    }
+  }
+
   return (
     <div className="w-full rounded-lg p-6 bg-card">
       <div className="space-y-6">
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+        {/* Modern Summary Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Deuda Total 2025-2</div>
+            <div className="text-2xl font-bold text-gray-900">
+              $
+              {deudaTotal.toLocaleString("es-CL", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-lg border border-red-200 shadow-sm">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+              Interés Acumulado
+            </div>
+            <div className="text-2xl font-bold text-red-700">
+              $
+              {interesAcumulado.toLocaleString("es-CL", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Total Seleccionado</div>
+            <div className="text-2xl font-bold text-gray-900">
+              $
+              {totalSeleccionado.toLocaleString("es-CL", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Modern Table */}
+        <div className="overflow-x-auto bg-white rounded-lg border border-gray-200">
+          <table className="w-full">
             <thead>
-              <tr className="bg-blue-100">
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Tipo</th>
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">Descripción</th>
-                <th className="border border-gray-300 px-3 py-2 text-left text-sm font-semibold">
-                  Fecha de Vencimiento
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-4 py-3 text-left">
+                  <Checkbox
+                    checked={selectedRows.length === charges.length}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setSelectedRows(charges.map((_, i) => i))
+                      } else {
+                        setSelectedRows([])
+                      }
+                    }}
+                  />
                 </th>
-                <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">Monto (CLP)</th>
-                <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">Intereses</th>
-                <th className="border border-gray-300 px-3 py-2 text-right text-sm font-semibold">Total</th>
-                <th className="border border-gray-300 px-3 py-2 text-center text-sm font-semibold">Selección</th>
+                <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Detalle
+                </th>
+                <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Vencimiento
+                </th>
+                <th className="px-4 py-3.5 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Monto
+                </th>
+                <th className="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-4 py-3.5 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Total
+                </th>
               </tr>
             </thead>
-            <tbody>
-              {charges.map((charge, index) => {
-                const isOverdue = index < 4
-                const isUpcoming = index === 4
-                const bgColor = isOverdue ? "bg-red-50" : isUpcoming ? "bg-yellow-50" : "bg-white"
-                const hoverColor = isOverdue ? "hover:bg-red-100" : isUpcoming ? "hover:bg-yellow-100" : "hover:bg-gray-50"
-                
-                return (
-                  <tr key={index} className={`${bgColor} ${hoverColor}`}>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.tipo}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.descripcion}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm">{charge.fechaVencimiento}</td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
-                      {charge.monto.toLocaleString("es-CL", {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
-                      {charge.intereses.toLocaleString("es-CL", {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2 text-sm text-right">
+            <tbody className="divide-y divide-gray-200">
+              {charges.map((charge, index) => (
+                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-4">
+                    <Checkbox
+                      checked={selectedRows.includes(index)}
+                      onCheckedChange={() => handleRowSelection(index)}
+                    />
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-gray-900">{charge.tipo}</span>
+                      <span className="text-xs text-gray-500 mt-0.5">{charge.descripcion}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="text-sm text-gray-900">{charge.fechaVencimiento}</span>
+                  </td>
+                  <td className="px-4 py-4 text-right">
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm font-semibold text-gray-900">
+                        $
+                        {charge.total.toLocaleString("es-CL", {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                      </span>
+                      {charge.intereses > 0 && (
+                        <span className="text-xs text-red-600 mt-0.5">
+                          +${charge.intereses.toLocaleString("es-CL")} intereses
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">{getStatusBadge(charge.estado)}</td>
+                  <td className="px-4 py-4 text-right">
+                    <span className="text-sm font-bold text-gray-900">
+                      $
                       {charge.total.toLocaleString("es-CL", {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
                       })}
-                    </td>
-                    <td className="border border-gray-300 px-3 py-2 text-center">
-                      <Checkbox
-                        checked={selectedRows.includes(index)}
-                        onCheckedChange={() => handleRowSelection(index)}
-                      />
-                    </td>
-                  </tr>
-                )
-              })}
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 justify-end">
+        <div className="flex justify-between items-center">
+          <div className="text-sm">
+            <span className="font-semibold text-gray-700">Saldo Neto a Pagar: </span>
+            <span className="font-bold text-gray-900 text-lg">
+              $
+              {totalSeleccionado.toLocaleString("es-CL", {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+            </span>
+          </div>
           <Button
             variant="outline"
-            className="bg-gray-100 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="border-gray-300 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
             onClick={handleClearSelection}
             disabled={!hasSelection}
           >
@@ -188,48 +297,14 @@ export function PagoEnLineaView() {
           </Button>
         </div>
 
-        {/* Summary Section */}
-        <div className="space-y-3 bg-gray-50 px-8 py-4 rounded-lg">
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Saldo de Cuenta:</span>
-            <span className="font-bold text-lg">
-              {saldoCuenta.toLocaleString("es-CL", {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Total Seleccionado para Pagar:</span>
-            <span className="font-bold">
-              {totalSeleccionado.toLocaleString("es-CL", {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}
-            </span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Porcentaje de Descuento del Pago:</span>
-            <span>0 %</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Descuento Aplicable del Pago:</span>
-            <span>0</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="font-semibold">Saldo Neto a Pagar:</span>
-            <span className="font-bold">0</span>
-          </div>
-        </div>
-
         {/* Payment Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-4">
           <Button
-            className="bg-gray-700 hover:bg-gray-800 text-white px-8 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="bg-[#1e3a5f] hover:bg-[#152a45] text-white px-12 py-6 text-base font-semibold disabled:opacity-40 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transition-all"
             onClick={handlePagoEnLinea}
             disabled={!hasSelection}
           >
-            Pago en Línea
+            Proceder al Pago en Línea
           </Button>
         </div>
       </div>

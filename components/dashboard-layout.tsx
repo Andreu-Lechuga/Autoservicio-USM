@@ -21,7 +21,6 @@ import {
   X,
 } from "lucide-react"
 import { useAuth } from "@/components/auth-context"
-import { useTheme } from "next-themes"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,7 +34,7 @@ import {
 
 interface DashboardLayoutProps {
   children: ReactNode
-  activeSection: string
+  activeSection: string | null
   onSectionChange: (section: string) => void
 }
 
@@ -43,8 +42,9 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [showNotificationsPopup, setShowNotificationsPopup] = useState(false)
   const [showSuccessToast, setShowSuccessToast] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const [showDarkModeToast, setShowDarkModeToast] = useState(false)
   const { userEmail, userName, userLastName, logout } = useAuth()
-  const { theme, setTheme } = useTheme()
 
   // Notificaciones estáticas
   const notifications = [
@@ -88,7 +88,11 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
   }
 
   const toggleDarkMode = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
+    const newMode = !isDarkMode
+    setIsDarkMode(newMode)
+    if (newMode) {
+      setShowDarkModeToast(true)
+    }
   }
 
   const toggleNotifications = () => {
@@ -104,26 +108,47 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
     }
   }, [showSuccessToast])
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Top Bar */}
-      <div className="px-8 py-4 bg-[#000053]"></div>
+  useEffect(() => {
+    if (showDarkModeToast) {
+      const timer = setTimeout(() => {
+        setShowDarkModeToast(false)
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showDarkModeToast])
 
-      {/* University Logo and Title */}
-      <div className="px-8 pb-6 bg-[#000053]">
-        <div className="flex gap-6 items-center">
-          <div className="w-64 flex justify-center">
-            <img src="/logo-usm.svg" alt="Logo USM" className="h-36 w-auto" />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold text-white">Universidad Tecnica Federico Santa Maria</h1>
-          </div>
-        </div>
+  return (
+    <div className="min-h-screen bg-background relative">
+      {/* Fixed Background Image */}
+      <div className="fixed inset-0 z-0">
+        <img 
+          src="/perfil-fondo-2.jpg" 
+          alt="Background" 
+          className="w-full h-full object-cover"
+          style={{ objectPosition: 'center 30%' }}
+        />
       </div>
 
-      <div className="px-8 pb-8 bg-gradient-to-b from-[#000053] to-white">
+      {/* Content Container */}
+      <div className="relative z-10">
+        {/* Top Bar */}
+        <div className="px-8 py-4"></div>
+
+        {/* University Logo and Title */}
+        <div className="px-8 pb-6 relative z-10">
+          <div className="flex gap-6 items-center">
+            <div className="w-64 flex justify-center">
+              <img src="/logo-usm.svg" alt="Logo USM" className="h-36 w-auto drop-shadow-lg" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold text-white drop-shadow-lg">Universidad Tecnica Federico Santa Maria</h1>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-8 pb-8 relative z-10">
         <div className="flex gap-6 items-start">
-          <div className="w-64 bg-sidebar rounded-2xl p-6 flex flex-col h-fit">
+          <div className={`w-64 bg-sidebar rounded-2xl p-6 flex flex-col h-fit ${isDarkMode ? 'dark' : ''}`}>
             <div className="flex flex-col items-center mb-8">
               <Avatar className="w-20 h-20 mb-3">
                 <AvatarFallback className="bg-white text-[#385177] text-xl">
@@ -181,7 +206,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
             {/* New Header - Outside content div, on blue background */}
             <div className="absolute -top-12 left-0 right-0 flex items-center justify-between px-6 z-10">
               <h2 className="text-xl font-semibold text-white">
-                Bienvenido <span className="font-bold text-blue-200">{userName} {userLastName}</span> al Portal de Autoservicio Institucional
+                Bienvenido <span className="font-bold text-[#CDE9FF]">{userName} {userLastName}</span> al Portal de Autoservicio Institucional
               </h2>
               <div className="flex items-center gap-3 relative">
                 <Button
@@ -190,7 +215,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                   className="rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                   onClick={toggleDarkMode}
                 >
-                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </Button>
                 <div className="relative">
                   <Button
@@ -200,7 +225,7 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                     onClick={toggleNotifications}
                   >
                     <Bell className="w-4 h-4" />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
                   </Button>
                   
                   {showNotificationsPopup && (
@@ -210,12 +235,12 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                         onClick={() => setShowNotificationsPopup(false)}
                       />
 
-                      <div className="absolute right-0 top-12 w-[480px] bg-white dark:bg-gray-800 rounded-lg shadow-2xl z-50 border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">Notificaciones</h3>
+                      <div className="absolute right-0 top-12 w-[480px] bg-white rounded-lg shadow-2xl z-50 border border-gray-200">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                          <h3 className="font-semibold text-gray-900">Notificaciones</h3>
                           <button
                             onClick={() => setShowNotificationsPopup(false)}
-                            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            className="text-gray-500 hover:text-gray-700"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -225,10 +250,10 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                           {notifications.map((notification, index) => (
                             <div
                               key={index}
-                              className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 ${
+                              className={`px-4 py-3 border-b border-gray-100 last:border-b-0 ${
                                 notification.type === 'alerta'
-                                  ? 'bg-red-50 dark:bg-red-950 border-l-4 border-l-red-500'
-                                  : 'bg-yellow-50 dark:bg-yellow-950 border-l-4 border-l-yellow-500'
+                                  ? 'bg-red-50 border-l-4 border-l-red-500'
+                                  : 'bg-yellow-50 border-l-4 border-l-yellow-500'
                               }`}
                             >
                               <div className="flex gap-3">
@@ -240,10 +265,10 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
                                   )}
                                 </div>
                                 <div className="flex-1">
-                                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                  <p className="text-sm font-semibold text-gray-900">
                                     {notification.title}
                                   </p>
-                                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5">
+                                  <p className="text-sm text-gray-700 mt-0.5">
                                     {notification.message}
                                   </p>
                                 </div>
@@ -258,28 +283,32 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-6">
-              {activeSection !== "informacion-personal" && (
-                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-card-foreground">
-                    {activeSection === "pago-en-linea" && "Pago en Linea"}
-                    {activeSection === "matricula" && "Matricula"}
-                    {activeSection === "servicios" && "Servicios"}
-                  </h2>
-                </div>
-              )}
+            {activeSection && (
+              <div className="bg-card rounded-2xl p-6">
+                {activeSection !== "informacion-personal" && (
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                    <h2 className="text-xl font-semibold text-card-foreground">
+                      {activeSection === "pago-en-linea" && "Pago en Linea"}
+                      {activeSection === "matricula" && "Matricula"}
+                      {activeSection === "servicios" && "Servicios"}
+                    </h2>
+                  </div>
+                )}
 
-              {children}
-            </div>
+                {children}
+              </div>
+            )}
           </div>
         </div>
 
         <div className="mt-4 text-center space-y-1">
-          <p className="text-xs text-[#000053]">© Universidad Técnica Federico Santa María</p>
-          <p className="text-xs text-[#000053]">Portal de Requerimientos</p>
-          <p className="text-xs text-[#000053]">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
+          <p className="text-xs text-white">© Universidad Técnica Federico Santa María</p>
+          <p className="text-xs text-white">Portal de Requerimientos</p>
+          <p className="text-xs text-white">Sitio Web administrado por Dirección General de Sistemas de Gestión</p>
+        </div>
         </div>
       </div>
+
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -301,6 +330,14 @@ export function DashboardLayout({ children, activeSection, onSectionChange }: Da
         }`}
       >
         <p className="font-medium">Notificaciones activadas correctamente para {userEmail}</p>
+      </div>
+
+      <div
+        className={`fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-4 rounded-lg shadow-lg transition-all duration-500 z-[60] ${
+          showDarkModeToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+      >
+        <p className="font-medium">Modo Oscuro en Beta. Ejemplo Menu Lateral</p>
       </div>
     </div>
   )
